@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Put, Delete, Param, Body } from "@nestjs/common";
-import { BooksService } from './books.service';
-import { Book } from './book.model';
+import { LivroService } from './books.service';
+import { Livro } from './book.model';
 
 @Controller('livros')
-export class LivrosController {x
-    constructor(private booksService: BooksService) {}
+export class LivroController {x
+    constructor(private booksService: LivroService) {}
 
     @Get()
     getLivros() {
@@ -17,12 +17,12 @@ export class LivrosController {x
     }
     
     @Post()
-    createLivro(@Body() book: Book) {
+    createLivro(@Body() book: Livro) {
         return this.booksService.create(book);
     }
     
     @Put(':id')
-    updateLivro(@Param('id') id: string, @Body() book: Book) {
+    updateLivro(@Param('id') id: string, @Body() book: Livro) {
         return this.booksService.update(id, book);
     }
     
