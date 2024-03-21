@@ -1,5 +1,6 @@
-create database jonathan;
-use jonathan;
+create database bookservices;
+use bookservices;
+
 CREATE TABLE Books (
     id INT AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
