@@ -18,6 +18,8 @@ export class LivroController {x
     
     @Post()
     createLivro(@Body() book: Livro) {
+
+        book.id = Math.random().toString(36).substr(2, 9);
         return this.booksService.create(book);
     }
     

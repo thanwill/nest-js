@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Livro } from '../controller/book.model';
-import { LivroController } from '../controller/books.controller';
-import { LivroService } from 'controller/books.service';
+import { Livro } from '../livros/book.model';
+import { LivroController } from '../livros/books.controller';
+import { LivroService } from 'livros/books.service';
+import { DesignController } from 'designpatterns/design.controller';
+import { DesignService } from 'designpatterns/design.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { LivroService } from 'controller/books.service';
     }),
     SequelizeModule.forFeature([Livro]),
   ],
-  controllers: [AppController, LivroController], 
-  providers: [AppService, LivroService],
+  controllers: [AppController, LivroController, DesignController], 
+  providers: [AppService, LivroService, DesignService],
 })
 export class AppModule {}
