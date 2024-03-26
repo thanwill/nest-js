@@ -3,7 +3,7 @@ import { LivroService } from './books.service';
 import { Livro } from './book.model';
 
 @Controller('livros')
-export class LivroController {x
+export class LivroController {
     constructor(private booksService: LivroService) {}
 
     @Get()
