@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Livro } from '../livros/book.model';
-import { LivroController } from '../livros/books.controller';
-import { LivroService } from 'livros/books.service';
-import { DesignController } from 'designpatterns/design.controller';
-import { DesignService } from 'designpatterns/design.service';
+import { Livro } from './livros/book.model';
+import { LivroController } from './livros/books.controller';
+import { LivroService } from 'src/livros/books.service';
+import { DesignController } from 'src/designpatterns/design.controller';
+import { DesignService } from 'src/designpatterns/design.service';
 
 @Module({
   imports: [
