@@ -11,5 +11,10 @@ export class DesignController {
     public singleton(): object {
         return this.designService.singleton();
     }
+
+    @Get("facade")
+    public facade(): object {
+        return this.designService.facade();
+    }
     
 }
