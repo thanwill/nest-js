@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Put, Delete, HttpStatus, Param } from "@ne
 import { HttpException } from "@nestjs/common/exceptions/http.exception";
 import {  ProdutoService } from './produto.service';
 
-@Controller('company')
+@Controller('products')
 export class ProdutoController {
     constructor(
         private companyService: ProdutoService
@@ -19,10 +19,23 @@ export class ProdutoController {
     }
 
     // listar por nome 
-    @Get('nome/:nome')    
-    async findByName(@Param('nome') nome: string) {
-        console.log(nome);        
-        return this.companyService.findByName(nome);
+    @Get('name/:name')    
+    async findByName(@Param('name') nome: string) {
+        
+        const response = await this.companyService.findByName(nome);
+
+        if (response.length == 0) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return {
+                status: 'success',
+                data: response
+            }
+        } catch (error) {
+            throw new HttpException('Error finding company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -54,17 +67,19 @@ export class ProdutoController {
 
     @Put(':id')
     async update(@Param('id') id: string, @Body() company) {
-        console.log(company);
-        console.log(id);
-
         try {
-            const updatedCompany = await this.companyService.update(company, id);
+            const response = await this.companyService.update(id, company);
+
+            if (response[0] == 0) {
+                throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+            }
 
             return {
                 status: 'success',
                 message: 'Company updated successfully',
-                data: updatedCompany
+                data: response[1]
             }
+
         } catch (error) {
             throw new HttpException('Error updating company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }

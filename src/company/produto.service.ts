@@ -30,13 +30,8 @@ export class ProdutoService {
         await this.produtoModel.destroy({ where: { id } });
     }
 
-    async update(company: Produtos, id: string): Promise<[number, Produtos[]]> {
-        const response = this.produtoModel.update(company, { where: { id } });
-        console.log(response);
-        return  [
-            response[0],
-            await this.produtoModel.findAll({ where: { id } })
-        ];
+    async update(id: string, company: Produtos): Promise<[number, Produtos[]]> {
+        return this.produtoModel.update(company, { where: { id }, returning: true });
     }
 
 }
