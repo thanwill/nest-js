@@ -11,10 +11,11 @@ import { Model, Table, PrimaryKey, Column } from "sequelize-typescript";
  */
 
 @Table 
-export class Company extends Model<Company> {
+export class Produtos extends Model<Produtos> {
+
     @PrimaryKey
-    @Column
-    id: string;
+    @Column({ allowNull: false, autoIncrement: true })
+    id: number;
 
     @Column
     nome: string;
@@ -33,4 +34,10 @@ export class Company extends Model<Company> {
 
     @Column
     valor: number;
+
+    @Column
+    createdAt: Date;
+
+    @Column
+    updatedAt: Date;
 }

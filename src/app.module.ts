@@ -5,8 +5,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Livro } from './livros/book.model';
 import { LivroController } from './livros/books.controller';
 import { LivroService } from 'src/livros/books.service';
-import { DesignController } from 'src/designpatterns/design.controller';
-import { DesignService } from 'src/designpatterns/design.service';
+import { ProdutoController } from './company/produto.controller';
+import { ProdutoService } from './company/produto.service';
+import { Produtos } from './company/produto.model';
 
 @Module({
   imports: [
@@ -16,14 +17,14 @@ import { DesignService } from 'src/designpatterns/design.service';
       port: 3306,
       username: 'root',
       password: 'atzmkl712',
-      database: 'bookservices',
-      models: [Livro],
+      database: 'loja_eletronicos',
+      models: [Livro, Produtos],
       autoLoadModels: true,
       synchronize: true,
     }),
-    SequelizeModule.forFeature([Livro]),
+    SequelizeModule.forFeature([Livro, Produtos]),
   ],
-  controllers: [AppController, LivroController, DesignController], 
-  providers: [AppService, LivroService, DesignService],
+  controllers: [AppController, LivroController, ProdutoController], 
+  providers: [AppService, LivroService, ProdutoService],
 })
 export class AppModule {}
