@@ -30,8 +30,18 @@ export class ProdutoService {
         await this.produtoModel.destroy({ where: { id } });
     }
 
+    // delete all
+    async deleteAll(): Promise<void> {
+        await this.produtoModel.destroy({ where: {} });
+    }
+
     async update(id: string, company: Produtos): Promise<[number, Produtos[]]> {
         return this.produtoModel.update(company, { where: { id }, returning: true });
+    }
+
+    // post com um array de produtos
+    async createMany(products: Produtos[]): Promise<Produtos[]> {
+        return this.produtoModel.bulkCreate(products);
     }
 
 }

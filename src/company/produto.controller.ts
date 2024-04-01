@@ -5,20 +5,27 @@ import {  ProdutoService } from './produto.service';
 @Controller('products')
 export class ProdutoController {
     constructor(
-        private companyService: ProdutoService
+        private productService: ProdutoService
     ) {}
+
+    // funcao para gerar um COD PROD+TIMESTAMP
+    private generateCode() : number {    
+        return Math.floor(Math.random() * 1000000);
+    }
 
     @Get()
     async findAll() {
         try {
-            const response = await this.companyService.findAll();
+            const response = await this.productService.findAll();
 
             if (response.length == 0) {
                 throw new HttpException('Products not found', HttpStatus.NOT_FOUND);
             }
+            
 
             return {
                 status: 'success',
+                count: response.length,
                 data: response
             }
         } catch (error) {
@@ -29,7 +36,7 @@ export class ProdutoController {
     @Get(':id')
     async findOne(id: string) {
         try {
-            const response = await this.companyService.findOne(id);
+            const response = await this.productService.findOne(id);
 
             if (!response) {
                 throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -48,7 +55,7 @@ export class ProdutoController {
     @Get('name/:name')    
     async findByName(@Param('name') nome: string) {
         
-        const response = await this.companyService.findByName(nome);
+        const response = await this.productService.findByName(nome);
 
         if (response.length == 0) {
             throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -60,10 +67,9 @@ export class ProdutoController {
                 data: response
             }
         } catch (error) {
-            throw new HttpException('Error finding company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Error finding product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 
     @Post()
@@ -74,20 +80,48 @@ export class ProdutoController {
                 message: 'Missing data'
             }
         }
-        
-        company.id = Math.floor(Math.random() * 1000);
+
+        company.id = this.generateCode();
 
         try {
-            const newCompany = await this.companyService.create(company);
+            const newCompany = await this.productService.create(company);
 
             return {
                 status: 'success',
-                message: 'Company created successfully',
+                message: 'Product created successfully',
                 data: newCompany
             }
 
         } catch (error) {
-            throw new HttpException('Error creating company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Error creating product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // post com um array de produtos
+    @Post('many')
+    async createMany(@Body() products) {
+        if (!products.length) {
+            return {
+                status: 'error',
+                message: 'Missing data'
+            }
+        }
+
+        products.forEach(product => {
+            product.id = this.generateCode();
+        });
+
+        try {
+            const newProducts = await this.productService.createMany(products);
+
+            return {
+                status: 'success',
+                message: 'Products created successfully',
+                data: newProducts
+            }
+
+        } catch (error) {
+            throw new HttpException('Error creating products: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,7 +129,7 @@ export class ProdutoController {
     @Put(':id')    
     async update(@Param('id') id: string, @Body() company) {
         try {
-            const response = await this.companyService.update(id, company);
+            const response = await this.productService.update(id, company);
 
             if (response[0] == 0) {
                 throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -103,12 +137,12 @@ export class ProdutoController {
 
             return {
                 status: 'success',
-                message: 'Company updated successfully',
+                message: 'Product updated successfully',
                 data: response[1]
             }
 
         } catch (error) {
-            throw new HttpException('Error updating company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Error updating product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -116,14 +150,29 @@ export class ProdutoController {
     @Delete(':id')
     async delete(@Param('id') id: string){
         try{
-            await this.companyService.delete(id);
+            await this.productService.delete(id);
 
             return {
                 status: 'success',
-                message: 'Company deleted successfully'
+                message: 'Product deleted successfully'
             }
         } catch (error) {
-            throw new HttpException('Error deleting company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Error deleting product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // delete all
+    @Delete()
+    async deleteAll() {
+        try {
+            await this.productService.deleteAll();
+
+            return {
+                status: 'success',
+                message: 'All products deleted successfully'
+            }
+        } catch (error) {
+            throw new HttpException('Error deleting products: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

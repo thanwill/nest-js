@@ -14,14 +14,14 @@ import { Model, Table, PrimaryKey, Column } from "sequelize-typescript";
 export class Produtos extends Model<Produtos> {
 
     @PrimaryKey
-    @Column({ allowNull: false, autoIncrement: true })
+    @Column({ allowNull: false })
     id: number;
 
     @Column
     nome: string;
 
     @Column
-    empresa: string;
+    empresa: string; 
 
     @Column
     descricao: string;
