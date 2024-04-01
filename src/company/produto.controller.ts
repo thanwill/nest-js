@@ -18,6 +18,15 @@ export class ProdutoController {
         return this.companyService.findOne(id);
     }
 
+    // listar por nome 
+    @Get('nome/:nome')    
+    async findByName(@Param('nome') nome: string) {
+        console.log(nome);        
+        return this.companyService.findByName(nome);
+    }
+
+
+
     @Post()
     async create(@Body() company) {
         if (!company.nome || !company.empresa || !company.descricao || !company.quantidade || !company.marca || !company.valor) {

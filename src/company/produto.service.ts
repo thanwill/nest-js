@@ -14,6 +14,10 @@ export class ProdutoService {
         return this.produtoModel.findAll();
     }
 
+    async findByName(nome: string): Promise<Produtos[]> {
+        return this.produtoModel.findAll({ where: { nome } });
+    }
+
     async findOne(id: string): Promise<Produtos> {
         return this.produtoModel.findOne({ where: { id } });
     }
