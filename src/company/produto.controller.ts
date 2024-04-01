@@ -10,12 +10,38 @@ export class ProdutoController {
 
     @Get()
     async findAll() {
-        return this.companyService.findAll();
+        try {
+            const response = await this.companyService.findAll();
+
+            if (response.length == 0) {
+                throw new HttpException('Products not found', HttpStatus.NOT_FOUND);
+            }
+
+            return {
+                status: 'success',
+                data: response
+            }
+        } catch (error) {
+            throw new HttpException('Error finding products: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Get(':id')
     async findOne(id: string) {
-        return this.companyService.findOne(id);
+        try {
+            const response = await this.companyService.findOne(id);
+
+            if (!response) {
+                throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+            }
+
+            return {
+                status: 'success',
+                data: response
+            }
+        } catch (error) {
+            throw new HttpException('Error finding product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // listar por nome 
@@ -65,7 +91,8 @@ export class ProdutoController {
         }
     }
 
-    @Put(':id')
+    // Detalhes: 
+    @Put(':id')    
     async update(@Param('id') id: string, @Body() company) {
         try {
             const response = await this.companyService.update(id, company);
@@ -88,6 +115,16 @@ export class ProdutoController {
 
     @Delete(':id')
     async delete(@Param('id') id: string){
-        return this.companyService.delete(id);
+        try{
+            await this.companyService.delete(id);
+
+            return {
+                status: 'success',
+                message: 'Company deleted successfully'
+            }
+        } catch (error) {
+            throw new HttpException('Error deleting company: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 }
