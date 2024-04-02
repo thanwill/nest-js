@@ -1,0 +1,25 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+  db:    
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'loja_eletronicos'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'atzmkl712'
+      MYSQL_ROOT_PASSWORD: 'atzmkl712'
+    volumes:
+      - db_data:/var/lib/mysql
+    expose:
+      - 3306
+volumes:
+  db_data: {}
+  
