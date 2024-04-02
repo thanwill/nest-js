@@ -15,7 +15,7 @@ export class ProdutoService {
         return this.produtoModel.findAll();
     }
 
-    async findByName(nome: string): Promise<Produtos[]> {
+    async findByName2(nome: string): Promise<Produtos[]> {
         return await this.produtoModel.findAll({
             where: {
                 nome: {
@@ -25,6 +25,17 @@ export class ProdutoService {
         });
     }
 
+    async findByName(searchName : string ) : Promise <Produtos[]> {
+        return await this.produtoModel.findAll({
+            include: [{
+                model: Produtos,
+                where:{
+                    name: searchName
+                }
+            }]
+            
+        })
+    }
 
     async findOne(id: string): Promise<Produtos> {
         return this.produtoModel.findOne({ where: { id } });
