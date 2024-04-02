@@ -9,11 +9,12 @@ export class ProdutoController {
         private productService: ProdutoService
     ) { }
 
-    // funcao para gerar um COD PROD+TIMESTAMP
+    // Função para gerar um código aleatório
     private generateCode(): number {
         return Math.floor(Math.random() * 1000000);
     }
 
+    // Rota para buscar todos os produtos
     @Get()
     async findAll() {
         try {
@@ -34,8 +35,21 @@ export class ProdutoController {
         }
     }
 
+    // Rota para buscar um produto por nome usando query
+    @Get('search')
+    async search(@Query('nome') nome: string): Promise<Produtos[]> {
+        const response = await this.productService.findByNameQuery(nome);
+
+        if (response.length == 0) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    // Rota para buscar um produto por id usando parametro
     @Get(':id')
-    async findOne(id: string) {
+    async findOne(@Param('id') id: string) {
         try {
             const response = await this.productService.findOne(id);
 
@@ -52,7 +66,7 @@ export class ProdutoController {
         }
     }
 
-    // listar por nome 
+    // Rota para buscar um produto por nome usando parametro
     @Get('name/:name')
     async findByNameParam(@Param('name') nome: string) {
 
@@ -73,23 +87,8 @@ export class ProdutoController {
     }
 
 
-    // Pesquisa por query string 
-    @Get('search')
-    async search(@Query('nome') nome: string,): Promise<Produtos[]> {
 
-        const response = await this.productService.findByName(nome);
-
-        if (response.length == 0) {
-            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-        }
-
-        try {
-            return response;
-        } catch (error) {
-            throw new HttpException('Error finding product for name: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    // Rota para criar um produto
     @Post()
     async create(@Body() company) {
         if (!company.nome || !company.empresa || !company.descricao || !company.quantidade || !company.marca || !company.valor) {
@@ -115,7 +114,7 @@ export class ProdutoController {
         }
     }
 
-    // post com um array de produtos
+    // Rota para criar varios produtos
     @Post('many')
     async createMany(@Body() products) {
         if (!products.length) {
@@ -143,7 +142,7 @@ export class ProdutoController {
         }
     }
 
-    // Detalhes: 
+    // Rota para atualizar um produto
     @Put(':id')
     async update(@Param('id') id: string, @Body() company) {
 
@@ -169,16 +168,49 @@ export class ProdutoController {
         }
     }
 
+    // Rota para deletar varios produtos
+    @Delete('many')
+    async deleteMany(@Body() ids) {
+        if (!ids.length) {
+            return {
+                status: 'error',
+                message: 'Missing data'
+            }
+        }
 
-    @Delete(':id')
-    async delete(@Param('id') id: string) {
         try {
-            await this.productService.delete(id);
+            const response = await this.productService.deleteMany(ids);
 
             return {
                 status: 'success',
-                message: 'Product deleted successfully'
+                message: 'Products deleted successfully',
+                data: response
             }
+        } catch (error) {
+            throw new HttpException('Error deleting products: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Rota para deletar um produto
+    @Delete(':id')
+    async delete(@Param('id') id: string) {
+        try {
+
+
+            const product = await this.productService.findOne(id);
+
+            if (!product) {
+                throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+            }
+
+            const response = await this.productService.delete(id);
+
+            return {
+                status: 'success',
+                message: 'Product deleted successfully',
+                data: response
+            }
+
         } catch (error) {
             throw new HttpException('Error deleting product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }

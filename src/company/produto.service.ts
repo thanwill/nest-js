@@ -16,26 +16,19 @@ export class ProdutoService {
     }
 
     async findByName(nome: string): Promise<Produtos[]> {
+        console.log('nome', nome);
         return await this.produtoModel.findAll({
             where: {
                 nome: {
-                    [Op.like]: '%' + nome + '%'
-                    // nome
+                    [Op.like]: '%' + nome + '%' // LIKE '%nome%'
                 }
             }
         });
     }
 
-    async findByName2(searchName : string ) : Promise <Produtos[]> {
-        return await this.produtoModel.findAll({
-            include: [{
-                model: Produtos,
-                where:{
-                    name: searchName
-                }
-            }]
-            
-        })
+    async findByNameQuery(nome: string): Promise<Produtos[]> {
+        
+        return this.produtoModel.findAll({ where: { nome: { [Op.like]: '%' + nome + '%' } } });
     }
 
     async findOne(id: string): Promise<Produtos> {
@@ -50,10 +43,10 @@ export class ProdutoService {
         await this.produtoModel.destroy({ where: { id } });
     }
 
-    // delete all
-    async deleteAll2(): Promise<void> {
-        await this.produtoModel.destroy({ where: {} });
+    async deleteMany(ids: number[]): Promise<number> {
+        return this.produtoModel.destroy({ where: { id: ids } });
     }
+    
 
     async update(id: string, company: Produtos): Promise<[number, Produtos[]]> {
         return this.produtoModel.update(company, { where: { id }, returning: true });
