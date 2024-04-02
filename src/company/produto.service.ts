@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { Produtos } from "./produto.model";
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ProdutoService {
@@ -15,7 +16,7 @@ export class ProdutoService {
     }
 
     async findByName(nome: string): Promise<Produtos[]> {
-        return this.produtoModel.findAll({ where: { nome } });
+        return this.produtoModel.findAll({ where: { nome: { [Op.like]: '%' + nome + '%' } } });
     }
 
     async findOne(id: string): Promise<Produtos> {
@@ -31,7 +32,7 @@ export class ProdutoService {
     }
 
     // delete all
-    async deleteAll(): Promise<void> {
+    async deleteAll2(): Promise<void> {
         await this.produtoModel.destroy({ where: {} });
     }
 

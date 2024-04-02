@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Put, Delete, HttpStatus, Param } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Delete, HttpStatus, Param, Query } from "@nestjs/common";
 import { HttpException } from "@nestjs/common/exceptions/http.exception";
 import {  ProdutoService } from './produto.service';
+import { Produtos } from './produto.model';
 
 @Controller('products')
 export class ProdutoController {
@@ -53,7 +54,7 @@ export class ProdutoController {
 
     // listar por nome 
     @Get('name/:name')    
-    async findByName(@Param('name') nome: string) {
+    async findByNameParam(@Param('name') nome: string) {
         
         const response = await this.productService.findByName(nome);
 
@@ -70,7 +71,12 @@ export class ProdutoController {
             throw new HttpException('Error finding product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
 
+    @Get('name')
+    async findByName(@Query('name') name: string): Promise<Produtos[]> {
+        return this.productService.findByName(name);
+    }
 
     @Post()
     async create(@Body() company) {
@@ -128,12 +134,17 @@ export class ProdutoController {
     // Detalhes: 
     @Put(':id')    
     async update(@Param('id') id: string, @Body() company) {
+
+
+        // pesquisar se o produto existe 
+        const product = await this.productService.findOne(id);
+
+        if (!product) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
+
         try {
             const response = await this.productService.update(id, company);
-
-            if (response[0] == 0) {
-                throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-            }
 
             return {
                 status: 'success',
@@ -158,21 +169,6 @@ export class ProdutoController {
             }
         } catch (error) {
             throw new HttpException('Error deleting product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // delete all
-    @Delete()
-    async deleteAll() {
-        try {
-            await this.productService.deleteAll();
-
-            return {
-                status: 'success',
-                message: 'All products deleted successfully'
-            }
-        } catch (error) {
-            throw new HttpException('Error deleting products: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
