@@ -16,8 +16,15 @@ export class ProdutoService {
     }
 
     async findByName(nome: string): Promise<Produtos[]> {
-        return this.produtoModel.findAll({ where: { nome: { [Op.like]: '%' + nome + '%' } } });
+        return await this.produtoModel.findAll({
+            where: {
+                nome: {
+                    [Op.like]: '%' + nome + '%'
+                }
+            }
+        });
     }
+
 
     async findOne(id: string): Promise<Produtos> {
         return this.produtoModel.findOne({ where: { id } });

@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Post, Put, Delete, HttpStatus, Param, Query } from "@nestjs/common";
 import { HttpException } from "@nestjs/common/exceptions/http.exception";
-import {  ProdutoService } from './produto.service';
+import { ProdutoService } from './produto.service';
 import { Produtos } from './produto.model';
 
 @Controller('products')
 export class ProdutoController {
     constructor(
         private productService: ProdutoService
-    ) {}
+    ) { }
 
     // funcao para gerar um COD PROD+TIMESTAMP
-    private generateCode() : number {    
+    private generateCode(): number {
         return Math.floor(Math.random() * 1000000);
     }
 
@@ -22,7 +22,7 @@ export class ProdutoController {
             if (response.length == 0) {
                 throw new HttpException('Products not found', HttpStatus.NOT_FOUND);
             }
-            
+
 
             return {
                 status: 'success',
@@ -53,9 +53,9 @@ export class ProdutoController {
     }
 
     // listar por nome 
-    @Get('name/:name')    
+    @Get('name/:name')
     async findByNameParam(@Param('name') nome: string) {
-        
+
         const response = await this.productService.findByName(nome);
 
         if (response.length == 0) {
@@ -71,11 +71,23 @@ export class ProdutoController {
             throw new HttpException('Error finding product: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
 
-    @Get('name')
-    async findByName(@Query('name') name: string): Promise<Produtos[]> {
-        return this.productService.findByName(name);
+
+    // Pesquisa por query string 
+    @Get('search')
+    async search(@Query('nome') nome: string,): Promise<Produtos[]> {
+
+        const response = await this.productService.findByName(nome);
+
+        if (response.length == 0) {
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return response;
+        } catch (error) {
+            throw new HttpException('Error finding product for name: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Post()
@@ -132,7 +144,7 @@ export class ProdutoController {
     }
 
     // Detalhes: 
-    @Put(':id')    
+    @Put(':id')
     async update(@Param('id') id: string, @Body() company) {
 
 
@@ -159,8 +171,8 @@ export class ProdutoController {
 
 
     @Delete(':id')
-    async delete(@Param('id') id: string){
-        try{
+    async delete(@Param('id') id: string) {
+        try {
             await this.productService.delete(id);
 
             return {
